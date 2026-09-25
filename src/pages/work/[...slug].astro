@@ -1,0 +1,89 @@
+---
+import { type CollectionEntry, getCollection, render } from 'astro:content';
+import { SITE_TITLE } from '../../consts';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+	const entries = await getCollection('work');
+	return entries.map((entry) => ({
+		params: { slug: entry.id },
+		props: entry,
+	}));
+}
+type Props = CollectionEntry<'work'>;
+
+const entry = Astro.props;
+const { title, summary, description, company, role, period, stack, ogImage } = entry.data;
+const { Content } = await render(entry);
+---
+
+<Base title={`${title} · ${SITE_TITLE}`} description={description} image={ogImage}>
+	<article>
+		<header class="case-header container page-top">
+			<p class="eyebrow">Case study · {company}</p>
+			<h1>{title}</h1>
+			<p class="summary">{summary}</p>
+			<dl class="meta">
+				<div>
+					<dt>Role</dt>
+					<dd>{role}</dd>
+				</div>
+				<div>
+					<dt>Company</dt>
+					<dd>{company}</dd>
+				</div>
+				<div>
+					<dt>When</dt>
+					<dd>{period}</dd>
+				</div>
+				<div>
+					<dt>Stack</dt>
+					<dd>{stack}</dd>
+				</div>
+			</dl>
+		</header>
+		<div class="prose">
+			<Content />
+		</div>
+	</article>
+</Base>
+
+<style>
+	.case-header {
+		padding-bottom: 1.5rem;
+	}
+	h1 {
+		margin-bottom: 0.75rem;
+		font-size: clamp(2.4rem, 1.6rem + 3.5vw, 3.4rem);
+	}
+	.summary {
+		margin-bottom: 2rem;
+		font-size: 1.25em;
+		line-height: 1.45;
+		color: var(--fg-muted);
+	}
+	.meta {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1rem 1.5rem;
+		margin: 0;
+		padding: 1.25rem 0;
+		border-top: 1px solid var(--border);
+		border-bottom: 1px solid var(--border);
+	}
+	dt {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		color: var(--fg-subtle);
+	}
+	dd {
+		margin: 0.2rem 0 0;
+		font-size: 0.9375rem;
+		line-height: 1.4;
+	}
+	@media (min-width: 40rem) {
+		.meta {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+		}
+	}
+</style>

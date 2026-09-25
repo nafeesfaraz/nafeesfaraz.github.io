@@ -1,0 +1,100 @@
+---
+title: OnboardR
+summary: Merchant onboarding at Front Payment, rebuilt as one gated flow.
+description: How I built OnboardR, Front Payment's merchant-onboarding portal, end to end with Claude Code, and why the credit check runs before a lead exists.
+company: Front Payment
+role: Product manager, developer, QA and designer
+period: 2026, live in production
+stack: Laravel, React, TypeScript, MySQL
+ogImage: /media/onboardr-launch-poster.jpg
+---
+
+import { Image } from 'astro:assets';
+import OnboardrFlow from '../../components/OnboardrFlow.astro';
+import dashboard from '../../assets/onboardr/dashboard.png';
+import newContract from '../../assets/onboardr/new-contract-dialog.png';
+
+<p class="lede">In May 2026 I was asked to solve a practical problem at Front Payment. Onboarding a new merchant took about two weeks, and most of that time went on waiting between steps that people did by hand.</p>
+
+<div class="outcome">
+	<div><span>Before</span><strong>About two weeks</strong></div>
+	<div><span>Now</span><strong>Under a day</strong></div>
+	<p>Team estimate. Onboarding time wasn't measured before or after.</p>
+</div>
+
+## The problem
+
+Company checks were done by hand. Agreements were drafted manually, signatures were chased over email and compliance lived in a separate spreadsheet. A merchant could be signed before anyone had confirmed they were creditworthy, and a compliance step could be missed.
+
+The process also lived in people's heads. That made it slow for our own sellers, and it meant we couldn't hand onboarding to external sales partners at all.
+
+## The system
+
+OnboardR turns onboarding into one workflow that sellers, team leads, partner companies and operations all work from. Each step gates the next, so nothing moves forward until the step before it is done.
+
+<OnboardrFlow />
+
+Every lead sits in one of four stages, so managers can see where a deal is stuck without having to ask.
+
+## Decisions that shaped it
+
+### The credit check comes before the lead
+
+A seller starts with an organisation number. OnboardR looks the company up in Brreg and runs an Experian credit check before a lead exists at all. If the score is below the minimum, nothing is created.
+
+<figure>
+	<Image src={newContract} alt="The New contract dialog in OnboardR. It asks for an organisation number and a partner, and explains that a credit check runs before the form opens." widths={[640, 960, 1440]} sizes="(min-width: 42.5rem) 40rem, calc(100vw - 2.5rem)" />
+	<figcaption>The first screen a seller sees. Nothing else opens until the credit check passes.</figcaption>
+</figure>
+
+This was the decision that saved the most time. It removed a whole set of conversations that used to happen two weeks in, after everyone had already put effort into the deal. Compliance became a design input rather than a review step.
+
+### The paperwork comes from the deal
+
+The seller picks services, payment methods and fees, with prices prefilled from the partner's rate card. OnboardR then generates the <span lang="nb">Samarbeidsavtale</span>, the partnership agreement, along with the annexes that match those choices. The contract can't drift from what was agreed, because it's built from the same data.
+
+### KYC screening gates the signature
+
+Signatories go through KYC, including PEP and sanctions screening, before they can sign with BankID. PEP status comes from the screening itself rather than a question the merchant answers, so the result reflects an actual check.
+
+### Access rules live in the data
+
+Sellers see their own leads, team leaders see their teams and company admins see their whole company. Partner companies share the system but never see each other's leads or rate cards. The rules are enforced in the database queries as well as the interface, and they fail closed. A company with no partners assigned sees nothing rather than everything.
+
+## How I built it
+
+I owned OnboardR end to end as product manager, developer, QA and designer. It's a Laravel and React application, and Claude Code wrote much of the code.
+
+Working AI-first moved my job up a level. I scope the problem, set the constraints and the quality bar, and let AI carry much of the implementation while I stay accountable for what ships.
+
+Most of the development ran on a 20 dollar a month Claude subscription, and that budget shaped how I work more than any framework has. With limited context, you define what done means before you start. You keep a written sprint log so you never re-derive what you already knew. You work one unit at a time, verify it with tests and a build, log it, and only then start the next. What began as token management turned into better scoping.
+
+Every change goes through a pull request, where automated tests and a build run before it merges. It then moves from main to a demo environment and on to production. Between July and September 2026 that added up to 255 commits, about half of them written together with Claude, and 74 test files.
+
+## What changed
+
+By the team's estimate, onboarding that took about two weeks now takes under a day. Operations gets the same complete handoff every time. And because the process lives in the system rather than in people's heads, external sales partners can onboard merchants too.
+
+OnboardR is live in production, with the Experian credit check, KYC screening and BankID signing all running against live services.
+
+<figure>
+	<Image src={dashboard} alt="The OnboardR seller dashboard with test data: contract counts for each stage, a monthly trend chart and recent activity." widths={[640, 960, 1440]} sizes="(min-width: 42.5rem) 40rem, calc(100vw - 2.5rem)" />
+	<figcaption>The seller dashboard, shown with test data.</figcaption>
+</figure>
+
+## See it in 40 seconds
+
+<figure class="wide">
+	<video controls preload="none" playsinline width="1920" height="1080" poster="/media/onboardr-launch-poster.webp" aria-describedby="video-note">
+		<source src="/media/onboardr-launch.mp4" type="video/mp4" />
+	</video>
+	<figcaption id="video-note">The launch video shows the same flow described on this page, with test data and background music but no narration. It follows one merchant from company verification and the credit score, through the rate card, the generated agreement and KYC, to BankID signing and the welcome email that gives the merchant access to FrontGO.</figcaption>
+</figure>
+
+## What I learnt
+
+Compliance is a design input. The checks that feel like friction are where a workflow can save the most time, as long as they run first.
+
+When you hold every role, the constraint is sequencing rather than skill. One unit of work at a time, verified and logged, then the next.
+
+A small budget is a scoping tool. It forced habits I now bring to every project.

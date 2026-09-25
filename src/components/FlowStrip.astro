@@ -1,0 +1,37 @@
+---
+import { GATE_LEGEND } from '../consts';
+
+// Compact view of the OnboardR flow for cards. Gates are steps the flow cannot pass until they succeed.
+const steps = [
+	{ label: 'Org number' },
+	{ label: 'Credit check', gate: true },
+	{ label: 'Deal terms' },
+	{ label: 'Agreement' },
+	{ label: 'KYC', gate: true },
+	{ label: 'BankID' },
+	{ label: 'Operations' },
+];
+---
+
+<ol class="chain" aria-label="The OnboardR flow, in order">
+	{
+		steps.map((step) => (
+			<li>
+				<span class:list={['chip', { 'is-gate': step.gate }]}>
+					{step.label}
+					{step.gate && <span class="sr-only">, a gate</span>}
+				</span>
+			</li>
+		))
+	}
+</ol>
+<p class="gate-legend">{GATE_LEGEND}</p>
+
+<style>
+	.chain {
+		margin-top: 1.25rem;
+	}
+	.gate-legend {
+		margin: 0.6rem 0 0;
+	}
+</style>
