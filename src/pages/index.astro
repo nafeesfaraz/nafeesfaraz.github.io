@@ -1,49 +1,200 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
+import { getEntry } from 'astro:content';
+import FlowStrip from '../components/FlowStrip.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import Base from '../layouts/Base.astro';
+
+const onboardr = await getEntry('work', 'onboardr');
+if (!onboardr) throw new Error('Missing work entry: onboardr');
+
+const moreWork = [
+	{
+		name: 'FrontGO',
+		context: 'Front Payment · Payments platform',
+		text: "A modular platform for payment links, checkout, invoicing, identity checks and terminals, used by 160+ active clients. I've owned its roadmap since 2022.",
+	},
+	{
+		name: 'DEBIA creditor portal',
+		context: 'Front Payment · Turnaround',
+		text: 'I took over a troubled portal in 2022 and led its revamp. We rebuilt three legacy integrations, added three new systems and recreated about 750 accounts while the service stayed live. It now serves 2,000+ creditor companies.',
+	},
+	{
+		name: 'Damp Sauna',
+		context: 'Front Payment · Booking and payments',
+		text: 'Replaced manual payment matching with timed payment links, reminders and invoices. Bookings marked as paid rose from 72% to 98.4% across 25 locations.',
+	},
+	{
+		name: 'Møbelringen',
+		context: 'Front Payment · ERP integration',
+		text: "Connected the stores' M3 ERP to FrontGO in a two-week build. Customers get a payment link before delivery, drivers can resend it, and payment status flows back to M3 across 13 stores.",
+	},
+	{
+		name: 'Kongeparken',
+		context: 'Front Payment · Loyalty',
+		text: "Replaced RFID bands with printed QR cards for a children's loyalty programme. Delivered in three weeks and scanned more than 100,000 times over three seasons.",
+	},
+	{
+		name: 'Läderach',
+		context: 'SELISE · Ecommerce template',
+		text: 'A reusable ecommerce template rolled out across six markets, cutting the time to launch a market from 6–8 months to about six weeks.',
+	},
+];
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
-				serves as a lightweight, minimally-styled starting point for anyone looking to build a personal
-				website, blog, or portfolio with Astro.
+<Base title={`${SITE_TITLE} · Product manager`} description={SITE_DESCRIPTION}>
+	<section class="hero container page-top">
+		<p class="eyebrow">Product manager · Stavanger, Norway</p>
+		<h1>I design products as systems and work AI-first.</h1>
+		<p class="lede">
+			I'm Nafees Faraz, a product manager at Front Payment. For more than ten years I've built
+			payment, onboarding and commerce platforms, first for European brands and now in Nordic fintech.
+		</p>
+		<p>
+			Most of that work runs behind the scenes: credit checks, integrations, reconciliation and the
+			handoffs between teams. It decides how quickly a merchant gets paid and how much manual work
+			lands on the people running the business.
+		</p>
+		<p>
+			Working AI-first, I set the scope and the quality bar, let AI carry much of the implementation,
+			and stay accountable for what ships.
+		</p>
+	</section>
+
+	<section id="work" class="work container" aria-labelledby="work-heading">
+		<h2 id="work-heading" class="eyebrow">Selected work</h2>
+
+		<article class="featured">
+			<p class="eyebrow">Case study · {onboardr.data.company} · 2026</p>
+			<h3>{onboardr.data.title}</h3>
+			<p class="featured-summary">
+				{onboardr.data.summary} I built it end to end with Claude Code, and the team estimates onboarding
+				went from about two weeks to under a day.
 			</p>
-			<p>
-				This template comes with a few integrations already configured in your{' '}
-				<code>astro.config.mjs</code> file. You can customize your setup with{' '}
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
+			<FlowStrip />
+			<p class="featured-cta">
+				<a href={`/work/${onboardr.id}/`}>
+					Read the case study<span class="sr-only">: {onboardr.data.title}</span>
+					<span aria-hidden="true">→</span>
+				</a>
 			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to{' '}
-				<a href="https://docs.astro.build/">read the docs</a>{' '}
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out{' '}
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>{' '}
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		</main>
-		<Footer />
-	</body>
-</html>
+		</article>
+
+		<h3 class="more-heading">More work</h3>
+		<ul class="more-list">
+			{
+				moreWork.map((item) => (
+					<li>
+						<p class="more-name">{item.name}</p>
+						<p class="more-context">{item.context}</p>
+						<p class="more-text">{item.text}</p>
+					</li>
+				))
+			}
+		</ul>
+	</section>
+</Base>
+
+<style>
+	.hero {
+		padding-bottom: 2.5rem;
+	}
+	.hero h1 {
+		margin-bottom: 1.5rem;
+	}
+	.hero p:not(.eyebrow, .lede) {
+		color: var(--fg-muted);
+	}
+
+	.work {
+		padding-top: 1.5rem;
+	}
+	.work h2 {
+		font-weight: 500;
+	}
+
+	.featured {
+		position: relative;
+		padding: 1.5rem;
+		border: 1px solid var(--border);
+		border-radius: var(--radius);
+		background: var(--surface);
+		transition: border-color 0.15s ease;
+	}
+	.featured:hover {
+		border-color: var(--fg-subtle);
+	}
+	.featured:has(a:focus-visible) {
+		outline: 2px solid var(--accent);
+		outline-offset: 3px;
+	}
+	.featured h3 {
+		margin-bottom: 0.5rem;
+		font-size: 1.75rem;
+	}
+	.featured-summary {
+		margin: 0;
+		color: var(--fg-muted);
+	}
+	.featured-cta {
+		margin: 1.5rem 0 0;
+		font-weight: 500;
+	}
+	.featured-cta a {
+		text-decoration: none;
+	}
+	.featured:hover .featured-cta a {
+		text-decoration: underline;
+	}
+	/* The whole card is the link target. */
+	.featured-cta a::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+	}
+	/* Where :has() works the card draws the focus ring, so the link doesn't need its own. */
+	@supports selector(:has(a)) {
+		.featured-cta a:focus-visible {
+			outline: none;
+		}
+	}
+
+	.more-heading {
+		margin: 3.5rem 0 0.75rem;
+		font-size: 1.25rem;
+	}
+	.more-list {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.more-list li {
+		padding: 1.1rem 0;
+		border-top: 1px solid var(--border);
+	}
+	.more-list li:last-child {
+		border-bottom: 1px solid var(--border);
+	}
+	.more-name {
+		margin: 0;
+		font-weight: 600;
+	}
+	.more-context {
+		margin: 0.1rem 0 0.4rem;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		color: var(--fg-subtle);
+	}
+	.more-text {
+		margin: 0;
+		color: var(--fg-muted);
+	}
+
+	@media (min-width: 48rem) {
+		.hero {
+			padding-bottom: 3.5rem;
+		}
+		.featured {
+			padding: 2rem;
+		}
+	}
+</style>
